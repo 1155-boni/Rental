@@ -1,45 +1,12 @@
-# Rental System Frontend
+# React + Vite
 
-This is the frontend part of the Rental System application, built using React and TypeScript.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Getting Started
+Currently, two official plugins are available:
 
-To get started with the frontend, follow these steps:
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-1. **Clone the repository:**
-   ```
-   git clone <repository-url>
-   cd rental-system/frontend
-   ```
+## Expanding the ESLint configuration
 
-2. **Install dependencies:**
-   ```
-   npm install
-   ```
-
-3. **Run the application:**
-   ```
-   npm start
-   ```
-
-   This will start the development server and open the application in your default web browser.
-
-## Project Structure
-
-- **public/index.html**: The main HTML file for the React application.
-- **src/App.tsx**: The main component that defines the structure and routing of the app.
-- **src/index.tsx**: The entry point for the React application.
-- **src/components/RentalList.tsx**: A component that displays a list of rentals.
-- **src/types/index.ts**: TypeScript types and interfaces used throughout the application.
-
-## API Integration
-
-The frontend communicates with the Django backend to fetch rental data. Ensure that the backend is running and accessible at the specified API endpoint.
-
-## Contributing
-
-If you would like to contribute to the project, please fork the repository and submit a pull request with your changes.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

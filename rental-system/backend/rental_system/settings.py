@@ -38,9 +38,9 @@ cloudinary.config(
     secure = True
 )
 
-DEFAULT_FILE_STORAGE = "cloudinary_strorage.storage.MediaCloudinaryStorage"
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS','127.0.0.1').split(',')
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
