@@ -24,3 +24,7 @@ class SignupSerializer(serializers.ModelSerializer):
         validated_data.pop('confirmPassword')
         user = User.objects.create_user(**validated_data)
         return user
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()

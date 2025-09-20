@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./index.css";
 import SignupForm from "./Components/signup.jsx";
-import LoginForm from "./components/LoginForm";
+import LoginForm from "./Components/login.jsx";
 import SideNavbar from "./components/SideNavbar";
 
 const navItems = [
