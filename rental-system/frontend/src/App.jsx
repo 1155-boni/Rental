@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./index.css";
 import SignupForm from "./Components/signup.jsx";
-import SideNavbar from "./Components/sideNavbar";
+import SideNavbar from "./components/SideNavbar";
 
 const navItems = [
   { label: "Home", href: "/" },
