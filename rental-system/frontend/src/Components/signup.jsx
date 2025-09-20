@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 
 function SignupForm({ onSignup }) {
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -10,7 +12,7 @@ function SignupForm({ onSignup }) {
     const response = await fetch("http://127.0.0.1:8000/api/signup/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password, email, confirmPassword }),
     });
     if (response.ok) {
       onSignup(username);
@@ -26,6 +28,14 @@ function SignupForm({ onSignup }) {
     >
       <h2 className="text-2xl font-bold mb-4 text-blue-600">Sign Up</h2>
       <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="mb-2 p-2 border rounded"
+        required
+      />
+      <input
         type="text"
         placeholder="Username"
         value={username}
@@ -38,6 +48,15 @@ function SignupForm({ onSignup }) {
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        className="mb-2 p-2 border rounded"
+        required
+      />
+        
+      <input
+        type="password"
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
         className="mb-2 p-2 border rounded"
         required
       />
