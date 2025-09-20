@@ -6,14 +6,16 @@ function LoginForm({ onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Send login data to backend (adjust URL as needed)
     const response = await fetch("http://127.0.0.1:8000/api/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
     });
+
     if (response.ok) {
-      onLogin(username);
+      const data = await response.json();
+      // backend should return role with user data
+      onLogin({ username: data.username, role: data.role });
     } else {
       alert("Login failed!");
     }
