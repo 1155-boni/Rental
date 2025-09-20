@@ -1,29 +1,6 @@
-from django.shortcuts import render, redirect
-from rest_framework import viewsets
-from .models import Rental
-from .serializers import RentalSerializer
-from .forms import *
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
-class RentalViewSet(viewsets.ModelViewSet):
-    queryset = Rental.objects.all()
-    serializer_class = RentalSerializer
-
-def signup_view(request):
-    if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-    else:
-        form = SignupForm()
-    return render(request, 'signup.html', {'form': form})
-
-def login_view(request):
-    if request.method == 'POST':
-        form = LoginForm(data=request.POST)
-        if form.is_valid():
-            # Log the user in
-            return redirect('rental-list')
-    else:
-        form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+@api_view(["GET"])
+def test_api(request):
+    return Response({"message": "Hello from Django Backend!"})
