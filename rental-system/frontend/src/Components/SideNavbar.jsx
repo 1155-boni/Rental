@@ -1,6 +1,6 @@
 import React from "react";
 
-function sideNavbar({ items }) {
+function SideNavbar({ items }) {
   return (
     <div className="h-screen w-64 bg-blue-700 text-white flex flex-col fixed left-0 top-0">
       <div className="p-6 text-2xl font-bold border-b border-blue-900">
@@ -24,4 +24,4 @@ function sideNavbar({ items }) {
   );
 }
 
-export default sideNavbar;``
+export default SideNavbar;

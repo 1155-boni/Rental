@@ -10,20 +10,20 @@ function App() {
   const [user, setUser] = useState(null); // {username, role}
   const [showLogin, setShowLogin] = useState(false);
 
-  // Dynamically set nav items based on role
+  // navItems must be inside App so it has access to `user`
   const navItems = [
     {
-      name: "Dashboard",
-      link: user
+      label: "Dashboard",
+      href: user
         ? user.role === "tenant"
           ? "/tenant-dashboard"
           : "/landlord-dashboard"
-        : "/dashboard", // fallback before login
+        : "/dashboard", 
     },
-    { name: "Properties", link: "/properties" },
-    { name: "Tenants", link: "/tenants" },
-    { name: "Payments", link: "/payments" },
-    { name: "Settings", link: "/settings" },
+    { label: "Properties", href: "/properties" },
+    { label: "Tenants", href: "/tenants" },
+    { label: "Payments", href: "/payments" },
+    { label: "Settings", href: "/settings" },
   ];
 
   return (
