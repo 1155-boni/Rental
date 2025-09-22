@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Rental(models.Model):
     title = models.CharField(max_length=255)
@@ -29,3 +30,20 @@ class signup(models.Model):
 
     def __str__(self):
         return self.username
+    
+class Property(models.Model):
+    STATUS_CHOICES = [
+        ("Vacant", "Vacant"),
+        ("Occupied", "Occupied"),
+        ("Pending", "Pending"),
+    ]
+
+    name = models.CharField(max_length=100)            # Apartment/House name
+    building = models.CharField(max_length=100)        # Building/Block name
+    landlord = models.ForeignKey(User, on_delete=models.CASCADE, related_name="properties")
+    location = models.CharField(max_length=100)
+    rent = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Vacant")
+
+    def __str__(self):
+        return f"{self.name} - {self.location}"
