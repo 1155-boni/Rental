@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Rental
+from .models import Property, Rental
 
 class RentalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,3 +28,10 @@ class SignupSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
+
+class PropertySerializer(serializers.ModelSerializer):
+    landlord = serializers.CharField(source="landlord.username", read_only=True)
+
+    class Meta:
+        model = Property
+        fields = ["id", "name", "building", "landlord", "location", "rent", "status"]
