@@ -10,7 +10,7 @@ function App() {
   const [user, setUser] = useState(null); // {username, role}
   const [showLogin, setShowLogin] = useState(false);
 
-  // navItems must be inside App so it has access to `user`
+  // ✅ Build navItems dynamically based on user role
   const navItems = [
     {
       label: "Dashboard",
@@ -18,7 +18,7 @@ function App() {
         ? user.role === "tenant"
           ? "/tenant-dashboard"
           : "/landlord-dashboard"
-        : "/dashboard", 
+        : "/dashboard", // fallback
     },
     { label: "Properties", href: "/properties" },
     { label: "Tenants", href: "/tenants" },
@@ -29,7 +29,9 @@ function App() {
   return (
     <div className="flex">
       <SideNavbar items={navItems} />
+
       <div className="flex-1 ml-64">
+        {/* ✅ When logged in, show correct dashboard */}
         {user ? (
           user.role === "tenant" ? (
             <TenantDashboard username={user.username} />
@@ -42,6 +44,7 @@ function App() {
           <SignupForm onSignup={setUser} />
         )}
 
+        {/* Toggle between login and signup when no user */}
         {!user && (
           <div className="flex justify-center mt-4">
             <button

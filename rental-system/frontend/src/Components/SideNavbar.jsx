@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function SideNavbar({ items }) {
   return (
@@ -10,12 +11,12 @@ function SideNavbar({ items }) {
         <ul>
           {items.map((item) => (
             <li key={item.label} className="mb-4">
-              <a
-                href={item.href}
+              <Link
+                to={item.href}
                 className="hover:bg-blue-900 px-4 py-2 rounded block"
               >
                 {item.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
