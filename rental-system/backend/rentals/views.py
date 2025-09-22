@@ -38,7 +38,9 @@ class LoginView(APIView):
                 return Response({"message": "Login successful."}, status=status.HTTP_200_OK)
             return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+@LoginView
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def tenant_dashboard(request):
     data = {
         "user_role": "Tenant",
@@ -53,7 +55,9 @@ def tenant_dashboard(request):
     }
     return JsonResponse(data)
 
-
+@LoginView
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def landlord_dashboard(request):
     data = {
         "user_role": "Landlord",
@@ -71,6 +75,7 @@ def landlord_dashboard(request):
 
 
 # Landlord properties
+@LoginView
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def landlord_properties(request):
@@ -79,6 +84,7 @@ def landlord_properties(request):
     return Response(serializer.data)
 
 # Tenant view: only vacant and not pending
+@LoginView
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def tenant_properties(request):
