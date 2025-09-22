@@ -10,4 +10,6 @@ urlpatterns = [
     path('api/login/', LoginView.as_view(), name='login'),
     path("api/tenant-dashboard/", views.tenant_dashboard, name="tenant-dashboard"),
     path("api/landlord-dashboard/", views.landlord_dashboard, name="landlord-dashboard"),
+    path("landlord/properties/", views.landlord_properties, name="landlord-properties"),
+    path("tenant/properties/", views.tenant_properties, name="tenant-properties"),
 ]
