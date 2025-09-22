@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rentals',
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'cloudinary',
 ]
 
