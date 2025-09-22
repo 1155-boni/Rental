@@ -4,7 +4,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
-from .serializers import SignupSerializer, LoginSerializer
+from .serializers import *
+from .models import Property
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+
 
 def home(request):
     return HttpResponse("<h1>Welcome to the Rental System Backend!</h1>")
@@ -63,3 +67,21 @@ def landlord_dashboard(request):
         ],
     }
     return JsonResponse(data)
+
+
+
+# Landlord properties
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def landlord_properties(request):
+    properties = Property.objects.filter(landlord=request.user)
+    serializer = PropertySerializer(properties, many=True)
+    return Response(serializer.data)
+
+# Tenant view: only vacant and not pending
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def tenant_properties(request):
+    properties = Property.objects.filter(status="Vacant")
+    serializer = PropertySerializer(properties, many=True)
+    return Response(serializer.data)
