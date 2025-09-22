@@ -11,69 +11,37 @@ function TenantDashboard() {
       .catch((err) => console.error(err));
   }, []);
 
-  if (!data) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <h2 className="text-2xl font-semibold text-gray-600 animate-pulse">
-          Loading Tenant Dashboard...
-        </h2>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-8 font-sans bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-blue-700">
-        🏠 Tenant Dashboard
-      </h1>
+    <div style={{ padding: "20px", fontFamily: "Arial" }}>
+      <h1 className="text-2xl font-bold mb-6">🏠 Tenant Dashboard</h1>
 
-      {/* Rentals Section */}
-      <section className="mb-8 bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          My Rentals
-        </h2>
-        <ul className="space-y-3">
-          {data.my_rentals.map((rental, i) => (
-            <li
-              key={i}
-              className="p-4 bg-blue-50 rounded-lg border border-blue-200 flex justify-between items-center"
-            >
-              <span className="font-medium">{rental.property}</span>
-              <span
-                className={`px-3 py-1 text-sm rounded-full ${
-                  rental.status === "Active"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {rental.status}
-              </span>
-            </li>
-          ))}
+      <section style={{ marginBottom: "20px" }}>
+        <h2 className="text-xl font-semibold mb-2">My Rentals</h2>
+        <ul className="list-disc list-inside">
+          {data?.my_rentals?.length > 0 ? (
+            data.my_rentals.map((r, i) => (
+              <li key={i}>
+                <strong>{r.property}</strong> – {r.status}
+              </li>
+            ))
+          ) : (
+            <li>No rentals yet</li>
+          )}
         </ul>
       </section>
 
-      {/* Payment History */}
-      <section className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          💳 Payment History
-        </h2>
-        <ul className="divide-y divide-gray-200">
-          {data.payment_history.map((p, i) => (
-            <li key={i} className="py-3 flex justify-between">
-              <span className="text-gray-600">{p.date}</span>
-              <span className="font-medium text-blue-700">${p.amount}</span>
-              <span
-                className={`px-3 py-1 text-sm rounded-full ${
-                  p.status === "Paid"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-yellow-100 text-yellow-700"
-                }`}
-              >
-                {p.status}
-              </span>
-            </li>
-          ))}
+      <section>
+        <h2 className="text-xl font-semibold mb-2">💳 Payment History</h2>
+        <ul className="list-disc list-inside">
+          {data?.payment_history?.length > 0 ? (
+            data.payment_history.map((p, i) => (
+              <li key={i}>
+                {p.date} – {p.amount} – {p.status}
+              </li>
+            ))
+          ) : (
+            <li>No payments yet</li>
+          )}
         </ul>
       </section>
     </div>

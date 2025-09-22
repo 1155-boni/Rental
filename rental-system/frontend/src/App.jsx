@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Routes, Route } from "react-router-dom"; // ✅ no BrowserRouter here
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./index.css";
-import SignupForm from "./Components/signup.jsx";
-import LoginForm from "./Components/login.jsx";
-import SideNavbar from "./components/SideNavbar";
+
+import SignupForm from "./Components/Signup.jsx";
+import LoginForm from "./Components/Login.jsx";
+import SideNavbar from "./Components/SideNavbar.jsx";
 import TenantDashboard from "./Components/TenantDashboard.jsx";
 import LandlordDashboard from "./Components/LandlordDashboard.jsx";
 import Properties from "./Components/Properties.jsx";
@@ -13,14 +14,7 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
 
   const navItems = [
-    {
-      label: "Dashboard",
-      href: user
-        ? user.role === "tenant"
-          ? "/tenant-dashboard"
-          : "/landlord-dashboard"
-        : "/dashboard",
-    },
+    { label: "Dashboard", href: "/" },
     { label: "Properties", href: "/properties" },
     { label: "Tenants", href: "/tenants" },
     { label: "Payments", href: "/payments" },
@@ -31,19 +25,8 @@ function App() {
     <div className="flex">
       <SideNavbar items={navItems} />
 
-      <div className="flex-1 ml-64 p-4">
+      <div className="flex-1 ml-64">
         <Routes>
-          <Route
-            path="/tenant-dashboard"
-            element={<TenantDashboard username={user?.username} />}
-          />
-          <Route
-            path="/landlord-dashboard"
-            element={<LandlordDashboard username={user?.username} />}
-          />
-          <Route path="/properties" element={<Properties />} />
-
-          {/* default */}
           <Route
             path="/"
             element={
@@ -58,6 +41,13 @@ function App() {
               ) : (
                 <SignupForm onSignup={setUser} />
               )
+            }
+          />
+
+          <Route
+            path="/properties"
+            element={
+              user ? <Properties user={user} /> : <Navigate to="/" />
             }
           />
         </Routes>
