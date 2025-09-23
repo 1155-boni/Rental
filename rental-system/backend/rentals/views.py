@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .serializers import *
 from .models import Property
+from rest_framework import viewsets, permissions
+from .serializers import PropertySerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
@@ -99,3 +101,8 @@ def tenant_properties(request):
     properties = Property.objects.filter(status="Vacant")
     serializer = PropertySerializer(properties, many=True)
     return Response(serializer.data)
+
+class PropertyViewSet(viewsets.ModelViewSet):
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+    permission_classes = [permissions.AllowAny]

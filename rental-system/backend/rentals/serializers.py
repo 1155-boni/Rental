@@ -35,3 +35,8 @@ class PropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = ["id", "name", "building", "landlord", "location", "rent", "status"]
+
+class PropertySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Property
+        fields = "__all__"
