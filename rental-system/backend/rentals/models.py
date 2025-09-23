@@ -33,17 +33,19 @@ class signup(models.Model):
     
 class Property(models.Model):
     STATUS_CHOICES = [
-        ("Vacant", "Vacant"),
-        ("Occupied", "Occupied"),
-        ("Pending", "Pending"),
+        ("vacant", "Vacant"),
+        ("pending", "Pending Approval"),
+        ("approved", "Approved"),
+        ("disapproved", "Disapproved"),
     ]
 
-    name = models.CharField(max_length=100)            # Apartment/House name
-    building = models.CharField(max_length=100)        # Building/Block name
     landlord = models.ForeignKey(User, on_delete=models.CASCADE, related_name="properties")
+    building_name = models.CharField(max_length=100)
+    apartment_name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
-    rent = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Vacant")
+    rent_per_month = models.DecimalField(max_digits=10, decimal_places=2)
+    image = models.ImageField(upload_to="properties/")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="vacant")
 
     def __str__(self):
-        return f"{self.name} - {self.location}"
+        return f"{self.building_name} - {self.apartment_name}"

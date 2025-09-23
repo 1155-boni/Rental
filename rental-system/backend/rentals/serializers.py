@@ -27,7 +27,7 @@ class SignupSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
-    password = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
 class PropertySerializer(serializers.ModelSerializer):
     landlord = serializers.CharField(source="landlord.username", read_only=True)
