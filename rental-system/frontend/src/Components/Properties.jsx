@@ -1,94 +1,130 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 function Properties({ user }) {
   const [properties, setProperties] = useState([]);
-  const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    if (!user) return;
-
-    const url =
-      user.role === "landlord"
-        ? "http://127.0.0.1:8000/api/landlord/properties/"
-        : "http://127.0.0.1:8000/api/tenant/properties/";
-
-    axios
-      .get(url)
-      .then((res) => setProperties(res.data))
-      .catch((err) => console.error(err));
-  }, [user]);
-
-  // Filter properties based on search query
-  const filteredProperties = properties.filter((p) => {
-    const query = search.toLowerCase();
-    return (
-      p.name.toLowerCase().includes(query) ||
-      p.building?.toLowerCase().includes(query) ||
-      p.landlord?.toLowerCase().includes(query) ||
-      p.location.toLowerCase().includes(query) ||
-      p.rent.toString().includes(query)
-    );
+  const [formData, setFormData] = useState({
+    building_name: "",
+    apartment_name: "",
+    location: "",
+    rent_per_month: "",
+    image: null,
   });
 
+  // Fetch properties
+  useEffect(() => {
+    axios.get("http://127.0.0.1:8000/api/properties/")
+      .then(res => setProperties(res.data))
+      .catch(err => console.error(err));
+  }, []);
+
+  // Handle form changes
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value });
+  };
+  const handleFileChange = (e) => {
+    setFormData({...formData, image: e.target.files[0]});
+  };
+
+  // Submit new property
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("building_name", formData.building_name);
+    data.append("apartment_name", formData.apartment_name);
+    data.append("location", formData.location);
+    data.append("rent_per_month", formData.rent_per_month);
+    data.append("image", formData.image);
+    data.append("landlord", user.id);
+
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/properties/", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setProperties([...properties, res.data]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Filter properties
+  const visibleProperties =
+    user.role === "tenant"
+      ? properties.filter((p) => p.status === "vacant" || p.status === "approved" || p.status === "pending")
+      : properties.filter((p) => p.landlord === user.id);
+
   return (
-    <div className="p-8 font-sans bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-blue-700">
-        {user?.role === "landlord" ? "🏢 My Properties" : "🏠 Available Properties"}
-      </h1>
+    <div className="p-6">
+      <h2 className="text-xl font-bold mb-4">Properties</h2>
 
-      {/* Search Bar */}
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search by name, landlord, location, or rent..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300"
-        />
-      </div>
+      {/* Landlord form */}
+      {user.role === "landlord" && (
+        <form onSubmit={handleSubmit} className="mb-6 p-4 bg-white shadow rounded">
+          <h3 className="font-semibold mb-3">Add New Property</h3>
 
-      {/* Properties Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProperties.length > 0 ? (
-          filteredProperties.map((p, i) => (
-            <div
-              key={i}
-              className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition"
-            >
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                {p.name}
-              </h2>
-              <p className="text-gray-600">
-                <span className="font-medium">Building:</span> {p.building}
-              </p>
-              {user.role === "tenant" && (
-                <p className="text-gray-600">
-                  <span className="font-medium">Landlord:</span> {p.landlord}
-                </p>
-              )}
-              <p className="text-gray-600">
-                <span className="font-medium">Location:</span> {p.location}
-              </p>
-              <p className="text-gray-800 font-semibold mt-2">
-                Rent: ${p.rent}/month
-              </p>
-              <span
-                className={`inline-block mt-3 px-3 py-1 text-sm rounded-full ${
-                  p.status === "Vacant"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {p.status}
-              </span>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 col-span-full">
-            No properties match your search.
-          </p>
-        )}
+          <input
+            type="text"
+            name="building_name"
+            placeholder="Building Name"
+            className="w-full mb-2 p-2 border rounded"
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="apartment_name"
+            placeholder="Apartment Name"
+            className="w-full mb-2 p-2 border rounded"
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="location"
+            placeholder="Location"
+            className="w-full mb-2 p-2 border rounded"
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="number"
+            name="rent_per_month"
+            placeholder="Rent per month"
+            className="w-full mb-2 p-2 border rounded"
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="file"
+            name="image"
+            className="w-full mb-2 p-2 border rounded"
+            onChange={handleFileChange}
+            accept="image/*"
+          />
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Add Property
+          </button>
+        </form>
+      )}
+
+      {/* Properties list */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {visibleProperties.map((p) => (
+          <div key={p.id} className="p-4 border rounded shadow bg-white">
+            <img
+              src={`http://127.0.0.1:8000${p.image}`}
+              alt={p.apartment_name}
+              className="h-40 w-full object-cover rounded mb-2"
+            />
+            <h3 className="font-bold">{p.building_name} - {p.apartment_name}</h3>
+            <p>{p.location}</p>
+            <p>Rent: ${p.rent_per_month}</p>
+            <p>Status: {p.status}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
