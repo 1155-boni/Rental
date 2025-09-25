@@ -106,3 +106,9 @@ class PropertyViewSet(viewsets.ModelViewSet):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
     permission_classes = [permissions.AllowAny]
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def secret_view(request):
+    user = request.user
+    return Response({"message": f"Hey {user.username}, hii ni secret data! 🔒"})

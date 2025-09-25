@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 
 function LoginForm({ onLogin }) {
   const [username, setUsername] = useState("");
@@ -11,23 +10,32 @@ function LoginForm({ onLogin }) {
     setError("");
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/login/", {
-        username,
-        password,
+      const response = await fetch("http://127.0.0.1:8000/api/token/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
       });
 
-      // Save user to localStorage (optional)
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      if (!response.ok) {
+        setError("❌ Invalid username or password");
+        return;
+      }
 
-      // Callback for parent
+      const data = await response.json();
+
+      // Save tokens to localStorage
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("refresh", data.refresh);
+
+      // Callback kwa parent component
       if (onLogin) {
-        onLogin(response.data.user);
+        onLogin({ username, token: data.access });
       }
 
       alert("✅ Login successful!");
     } catch (err) {
-      setError("❌ Invalid username or password");
       console.error(err);
+      setError("⚠️ Cannot connect to server");
     }
   };
 

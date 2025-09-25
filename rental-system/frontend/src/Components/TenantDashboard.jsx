@@ -1,49 +1,61 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 
 function TenantDashboard() {
-  const [data, setData] = useState(null);
+  const [apartments, setApartments] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/tenant-dashboard/")
-      .then((res) => setData(res.data))
-      .catch((err) => console.error(err));
+    const saved = JSON.parse(localStorage.getItem("apartments")) || [];
+    // tenants only see approved/pending/booked
+    const visible = saved.filter((apt) =>
+      ["Pending Approval", "Approved", "Booked"].includes(apt.status)
+    );
+    setApartments(visible);
   }, []);
 
+  const handleBook = (id) => {
+    const saved = JSON.parse(localStorage.getItem("apartments")) || [];
+    const updated = saved.map((apt) =>
+      apt.id === id ? { ...apt, status: "Booked", bookedBy: "TenantX" } : apt
+    );
+    localStorage.setItem("apartments", JSON.stringify(updated));
+    setApartments(updated.filter((apt) =>
+      ["Pending Approval", "Approved", "Booked"].includes(apt.status)
+    ));
+  };
+
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h1 className="text-2xl font-bold mb-6">🏠 Tenant Dashboard</h1>
-
-      <section style={{ marginBottom: "20px" }}>
-        <h2 className="text-xl font-semibold mb-2">My Rentals</h2>
-        <ul className="list-disc list-inside">
-          {data?.my_rentals?.length > 0 ? (
-            data.my_rentals.map((r, i) => (
-              <li key={i}>
-                <strong>{r.property}</strong> – {r.status}
-              </li>
-            ))
-          ) : (
-            <li>No rentals yet</li>
+    <div className="p-6">
+      <h2 className="text-xl font-bold mb-4">Tenant Dashboard</h2>
+      {apartments.map((apt) => (
+        <div
+          key={apt.id}
+          className="border p-4 rounded mb-3 flex gap-4 items-center"
+        >
+          {apt.image && (
+            <img
+              src={apt.image}
+              alt="apartment"
+              className="w-32 h-24 object-cover rounded"
+            />
           )}
-        </ul>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-semibold mb-2">💳 Payment History</h2>
-        <ul className="list-disc list-inside">
-          {data?.payment_history?.length > 0 ? (
-            data.payment_history.map((p, i) => (
-              <li key={i}>
-                {p.date} – {p.amount} – {p.status}
-              </li>
-            ))
-          ) : (
-            <li>No payments yet</li>
+          <div className="flex-1">
+            <h4 className="font-bold">{apt.title}</h4>
+            <p>{apt.description}</p>
+            <p className="text-sm text-gray-500">${apt.price}</p>
+            <p className="text-xs font-semibold">
+              Status: <span className="capitalize">{apt.status}</span>
+            </p>
+          </div>
+          {apt.status !== "Booked" && (
+            <button
+              onClick={() => handleBook(apt.id)}
+              className="bg-blue-500 text-white px-2 py-1 rounded"
+            >
+              Book
+            </button>
           )}
-        </ul>
-      </section>
+        </div>
+      ))}
     </div>
   );
 }
