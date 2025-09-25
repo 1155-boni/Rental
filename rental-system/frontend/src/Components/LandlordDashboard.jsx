@@ -1,148 +1,153 @@
 import React, { useState, useEffect } from "react";
 
-function LandlordDashboard() {
+function LandlordDashboard({ username }) {
   const [apartments, setApartments] = useState([]);
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     title: "",
     description: "",
     price: "",
     image: null,
   });
 
+  // Load apartments from localStorage
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("apartments")) || [];
-    setApartments(saved);
+    const stored = JSON.parse(localStorage.getItem("apartments")) || [];
+    setApartments(stored);
   }, []);
 
-  const saveToStorage = (data) => {
+  // Save to localStorage
+  const saveApartments = (data) => {
     localStorage.setItem("apartments", JSON.stringify(data));
+    setApartments(data);
   };
 
+  // Handle form input
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === "image") {
-      setFormData({ ...formData, image: URL.createObjectURL(files[0]) });
+    if (name === "image" && files.length > 0) {
+      const reader = new FileReader();
+      reader.onloadend = () =>
+        setForm((prev) => ({ ...prev, image: reader.result }));
+      reader.readAsDataURL(files[0]);
     } else {
-      setFormData({ ...formData, [name]: value });
+      setForm({ ...form, [name]: value });
     }
   };
 
+  // Add apartment
   const handleSubmit = (e) => {
     e.preventDefault();
     const newApartment = {
       id: Date.now(),
-      ...formData,
-      status: "Pending Approval",
+      ...form,
+      landlord: username,
+      status: "pending",
       bookedBy: null,
     };
     const updated = [...apartments, newApartment];
-    setApartments(updated);
-    saveToStorage(updated);
-    setFormData({ title: "", description: "", price: "", image: null });
+    saveApartments(updated);
+    setForm({ title: "", description: "", price: "", image: null });
   };
 
+  // Update status
   const updateStatus = (id, status) => {
     const updated = apartments.map((apt) =>
-      apt.id === id ? { ...apt, status } : apt
+      apt.id === id ? { ...apt, status, bookedBy: null } : apt
     );
-    setApartments(updated);
-    saveToStorage(updated);
+    saveApartments(updated);
   };
 
   return (
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">Landlord Dashboard</h2>
 
-      {/* Apartment Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow p-4 rounded mb-6"
-      >
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="mb-6 bg-white p-4 shadow rounded">
         <input
           type="text"
           name="title"
-          placeholder="Title"
-          value={formData.title}
+          placeholder="Apartment Title"
+          className="w-full mb-2 p-2 border rounded"
+          value={form.title}
           onChange={handleChange}
-          className="border p-2 w-full mb-2"
           required
         />
         <textarea
           name="description"
           placeholder="Description"
-          value={formData.description}
+          className="w-full mb-2 p-2 border rounded"
+          value={form.description}
           onChange={handleChange}
-          className="border p-2 w-full mb-2"
           required
         />
         <input
           type="number"
           name="price"
-          placeholder="Price"
-          value={formData.price}
+          placeholder="Rent Price"
+          className="w-full mb-2 p-2 border rounded"
+          value={form.price}
           onChange={handleChange}
-          className="border p-2 w-full mb-2"
           required
         />
         <input
           type="file"
           name="image"
           accept="image/*"
+          className="w-full mb-2"
           onChange={handleChange}
-          className="border p-2 w-full mb-2"
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
           Post Apartment
         </button>
       </form>
 
-      {/* Apartments List */}
-      <h3 className="font-semibold mb-2">My Apartments</h3>
-      {apartments.map((apt) => (
-        <div
-          key={apt.id}
-          className="border p-4 rounded mb-3 flex gap-4 items-center"
-        >
-          {apt.image && (
-            <img
-              src={apt.image}
-              alt="apartment"
-              className="w-32 h-24 object-cover rounded"
-            />
-          )}
-          <div className="flex-1">
-            <h4 className="font-bold">{apt.title}</h4>
-            <p>{apt.description}</p>
-            <p className="text-sm text-gray-500">${apt.price}</p>
-            <p className="text-xs font-semibold">
-              Status: <span className="capitalize">{apt.status}</span>
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => updateStatus(apt.id, "Approved")}
-              className="bg-green-500 text-white px-2 py-1 rounded"
-            >
-              Approve
-            </button>
-            <button
-              onClick={() => updateStatus(apt.id, "Disapproved")}
-              className="bg-red-500 text-white px-2 py-1 rounded"
-            >
-              Disapprove
-            </button>
-            <button
-              onClick={() => updateStatus(apt.id, "Vacant")}
-              className="bg-yellow-500 text-white px-2 py-1 rounded"
-            >
-              Vacant
-            </button>
-          </div>
-        </div>
-      ))}
+      {/* Apartment list */}
+      <h3 className="text-lg font-semibold mb-2">My Apartments</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {apartments
+          .filter((apt) => apt.landlord === username)
+          .map((apt) => (
+            <div key={apt.id} className="border rounded p-4 shadow bg-white">
+              {apt.image && (
+                <img
+                  src={apt.image}
+                  alt={apt.title}
+                  className="w-full h-40 object-cover mb-2 rounded"
+                />
+              )}
+              <h4 className="font-bold">{apt.title}</h4>
+              <p>{apt.description}</p>
+              <p className="text-sm text-gray-600">Ksh {apt.price}</p>
+              <p className="text-sm">Status: {apt.status}</p>
+              {apt.bookedBy && <p>Booked by: {apt.bookedBy}</p>}
+
+              {/* Controls */}
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => updateStatus(apt.id, "approved")}
+                  className="bg-green-500 text-white px-2 py-1 rounded"
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => updateStatus(apt.id, "disapproved")}
+                  className="bg-red-500 text-white px-2 py-1 rounded"
+                >
+                  Disapprove
+                </button>
+                <button
+                  onClick={() => updateStatus(apt.id, "vacant")}
+                  className="bg-gray-500 text-white px-2 py-1 rounded"
+                >
+                  Vacant
+                </button>
+              </div>
+            </div>
+          ))}
+      </div>
     </div>
   );
 }

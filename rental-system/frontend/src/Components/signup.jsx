@@ -117,7 +117,7 @@ function SignupForm({ onSignup }) {
 
         <p className="text-center text-sm text-gray-600 mt-4">
           Already have an account?{" "}
-          <a href="/ogin.jsx" className="text-blue-600 font-medium hover:underline">
+          <a href="/login.jsx" className="text-blue-600 font-medium hover:underline">
             Login
           </a>
         </p>
